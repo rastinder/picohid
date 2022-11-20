@@ -1,0 +1,6 @@
+Adafruit CircuitPython 8.0.0-beta.3 on 2022-10-20; Raspberry Pi Pico W with rp2040
+Board ID:raspberry_pi_pico_w
+UID:E6614864D36C8534
+MAC:28:CD:C1:08:9C:72
+boot.py output:
+key press detected
