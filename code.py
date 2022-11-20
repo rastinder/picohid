@@ -1,3 +1,4 @@
+print("Hello World!")
 import os
 import ipaddress
 import wifi
@@ -22,21 +23,26 @@ kbd = Keyboard(usb_hid.devices)
 print()
 print("Connecting to WiFi")
 ipv4 =  ipaddress.IPv4Address(os.getenv('IP'))
-print(ipv4)
 netmask =  ipaddress.IPv4Address("255.255.255.0")
 gateway =  ipaddress.IPv4Address("192.168.1.1")
 wifi.radio.set_ipv4_address(ipv4=ipv4,netmask=netmask,gateway=gateway)
 #wifi.radio.set_ipv4_address(ipv4="192.168.1.101",netmask="255.255.255.0",gateway="192.168.1.1")
 
 #wifi.stop_dhcp()
-#  connect to your SSID
-try:
-    wifi.radio.connect('fearless','qweqweqwe')
-    #wifi.radio.connect('Fear','asdasdasd')
-except:
-    print("fearless not found")
-    wifi.radio.connect(os.getenv('WIFI_SSID'), os.getenv('WIFI_PASSWORD'))
-
+#  connect to your SSID WIFI_PASSWORD
+while not wifi.radio.ipv4_address:
+    try:
+        wifi.radio.connect('fearless','qweqweqwe')
+    except:
+        pass
+    try:
+        wifi.radio.connect(os.getenv('WIFI_SSID'), os.getenv('WIFI_PASSWORD'))
+    except:
+        print("waiting for WiFi")
+        led.value = True
+        time.sleep(1)
+        led.value = False
+    
 print("Connected to WiFi")
 pool  = socketpool.SocketPool(wifi.radio)
 
@@ -45,9 +51,8 @@ pool  = socketpool.SocketPool(wifi.radio)
 # tell me m online
 sendURL = 'https://api.telegram.org/bot' + '1331062094:AAEsirbmiJk1RsPLsbHxa2Kh5KjF6jtmMjc' + '/sendMessage'
 chatId = '706316494'
-json_data = {"Date": "July 25, 2019"}
 requests = requests.Session(pool, ssl.create_default_context())
-response = requests.post(sendURL + "?chat_id=" + str(chatId) + "&text=" + str(wifi.radio.ipv4_address) + ' is up', json=json_data)
+response = requests.post(sendURL + "?chat_id=" + str(chatId) + "&text=" + str(wifi.radio.ipv4_address) + ' is up')
 response.close()
 #  prints IP address to REPL
 print("My IP address is", wifi.radio.ipv4_address)
